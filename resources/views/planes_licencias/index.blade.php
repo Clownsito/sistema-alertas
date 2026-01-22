@@ -42,18 +42,35 @@
                                 <td class="px-4 py-2">
                                     ${{ number_format($plan->precio, 0, ',', '.') }}
                                 </td>
+
+                                {{-- 🔁 TOGGLE ACTIVO --}}
                                 <td class="px-4 py-2">
-                                    {{ $plan->activo ? 'Sí' : 'No' }}
+                                    <form
+                                        method="POST"
+                                        action="{{ route('planes-licencias.toggle', $plan) }}"
+                                    >
+                                        @csrf
+                                        @method('PATCH')
+
+                                        <button
+                                            class="px-3 py-1 rounded text-white
+                                                {{ $plan->activo ? 'bg-green-600' : 'bg-gray-500' }}">
+                                            {{ $plan->activo ? 'Activo' : 'Inactivo' }}
+                                        </button>
+                                    </form>
                                 </td>
+
                                 <td class="px-4 py-2 flex gap-2">
                                     <a href="{{ route('planes-licencias.edit', $plan) }}"
                                        class="text-blue-600 hover:underline">
                                         Editar
                                     </a>
 
-                                    <form action="{{ route('planes-licencias.destroy', $plan) }}"
-                                          method="POST"
-                                          onsubmit="return confirm('¿Eliminar este plan?')">
+                                    <form
+                                        action="{{ route('planes-licencias.destroy', $plan) }}"
+                                        method="POST"
+                                        onsubmit="return confirm('¿Eliminar este plan?')"
+                                    >
                                         @csrf
                                         @method('DELETE')
                                         <button class="text-red-600 hover:underline">
@@ -64,7 +81,8 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="5" class="px-4 py-4 text-center text-gray-500">
+                                <td colspan="5"
+                                    class="px-4 py-4 text-center text-gray-500">
                                     No hay planes de licencia registrados.
                                 </td>
                             </tr>

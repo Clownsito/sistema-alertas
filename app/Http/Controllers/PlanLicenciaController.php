@@ -10,7 +10,6 @@ class PlanLicenciaController extends Controller
     public function index()
     {
         $planes = PlanLicencia::orderBy('created_at', 'desc')->get();
-
         return view('planes_licencias.index', compact('planes'));
     }
 
@@ -75,5 +74,16 @@ class PlanLicenciaController extends Controller
         return redirect()
             ->route('planes-licencias.index')
             ->with('success', 'Plan de licencia eliminado');
+    }
+
+    // ✅ NUEVO: toggle activo / inactivo
+    public function toggleActivo(PlanLicencia $planes_licencia)
+    {
+        $planes_licencia->activo = ! $planes_licencia->activo;
+        $planes_licencia->save();
+
+        return redirect()
+            ->route('planes-licencias.index')
+            ->with('success', 'Estado del plan actualizado');
     }
 }

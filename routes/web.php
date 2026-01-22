@@ -7,7 +7,7 @@ use App\Http\Controllers\PlanLicenciaController;
 use App\Http\Controllers\SuscripcionController;
 use App\Http\Controllers\CorreoAlertaController;
 use App\Http\Controllers\AlertaEnviadaController;
-
+use App\Http\Controllers\DashboardController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -20,10 +20,9 @@ Route::get('/', function () {
 });
 
 // Dashboard (protegido)
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
-
+Route::get('/dashboard', [DashboardController::class, 'index'])
+    ->middleware(['auth', 'verified'])
+    ->name('dashboard');
 /*
 |--------------------------------------------------------------------------
 | Rutas autenticadas
@@ -45,6 +44,11 @@ Route::middleware('auth')->group(function () {
     // Alertas enviadas (solo lectura)
     Route::get('alertas-enviadas', [AlertaEnviadaController::class, 'index'])
         ->name('alertas-enviadas.index');
+    Route::patch(
+    'planes-licencias/{planes_licencia}/toggle',
+    [PlanLicenciaController::class, 'toggleActivo']
+        )->name('planes-licencias.toggle');
+
 });
 
 // Rutas de autenticación (login, register, etc.)
