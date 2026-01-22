@@ -2,63 +2,78 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\PlanLicencia;
 use Illuminate\Http\Request;
 
 class PlanLicenciaController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        //
+        $planes = PlanLicencia::orderBy('created_at', 'desc')->get();
+
+        return view('planes_licencias.index', compact('planes'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
-        //
+        return view('planes_licencias.create');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'nombre' => 'required|string|max:255',
+            'cantidad_licencias' => 'required|integer|min:1',
+            'precio' => 'required|integer|min:0',
+            'activo' => 'required|boolean',
+        ]);
+
+        PlanLicencia::create([
+            'nombre' => $request->nombre,
+            'cantidad_licencias' => $request->cantidad_licencias,
+            'precio' => $request->precio,
+            'activo' => $request->activo,
+        ]);
+
+        return redirect()
+            ->route('planes-licencias.index')
+            ->with('success', 'Plan de licencia creado correctamente');
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
+    public function edit(PlanLicencia $planes_licencia)
     {
-        //
+        return view('planes_licencias.edit', [
+            'plan' => $planes_licencia
+        ]);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
+    public function update(Request $request, PlanLicencia $planes_licencia)
     {
-        //
+        $request->validate([
+            'nombre' => 'required|string|max:255',
+            'cantidad_licencias' => 'required|integer|min:1',
+            'precio' => 'required|integer|min:0',
+            'activo' => 'required|boolean',
+        ]);
+
+        $planes_licencia->update([
+            'nombre' => $request->nombre,
+            'cantidad_licencias' => $request->cantidad_licencias,
+            'precio' => $request->precio,
+            'activo' => $request->activo,
+        ]);
+
+        return redirect()
+            ->route('planes-licencias.index')
+            ->with('success', 'Plan de licencia actualizado');
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
+    public function destroy(PlanLicencia $planes_licencia)
     {
-        //
-    }
+        $planes_licencia->delete();
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
+        return redirect()
+            ->route('planes-licencias.index')
+            ->with('success', 'Plan de licencia eliminado');
     }
 }
